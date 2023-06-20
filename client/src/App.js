@@ -48,6 +48,9 @@ function App() {
       // alert(msg)
       setTime(msg);
     });
+    if (time) {
+      console.log('Hello world')
+    }
   }, [socket]);
   console.log(time);
   return (

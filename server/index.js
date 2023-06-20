@@ -50,7 +50,9 @@ io.on("connection", async (socket) => {
   console.log(`user connected: ${socket.id}`);
   const messages = await Message.find();
   io.emit("receive_message", messages);
-  io.emit("start_video", messages[0].message);
+  // io.emit("start_video", messages[0].message);
+    const special = await Message.find({name:'admin'});
+    io.emit("start_video", special[0]?.message);
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
     const allMessage = await Message.find();
@@ -61,8 +63,10 @@ io.on("connection", async (socket) => {
     const myTime = new Date(msg.time);
     console.log(60, myTime);
     console.log(myTime - Date.now());
-    setTimeout(() => {
-      io.emit("start_video", allMessage[0].message);
+    setTimeout(async() => {
+      await Message.create({ name: 'admin', message: 'I am admin' })
+      
+      io.emit("start_video", 'I am admin');
     }, myTime - Date.now());
   });
 });
