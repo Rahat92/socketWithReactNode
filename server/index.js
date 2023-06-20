@@ -50,28 +50,20 @@ io.on("connection", async (socket) => {
   console.log(`user connected: ${socket.id}`);
   const messages = await Message.find();
   io.emit("receive_message", messages);
+  io.emit("start_video", messages[0].message);
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
     const allMessage = await Message.find();
     console.log(allMessage);
-    socket.broadcast.emit("receive_message", allMessage);
-    console.log(msg.time);
-    setInterval(() => {
-      const adminTime = msg.time;
-      const date = new Date();
-      const time = date.getHours() + ":" + date.getMinutes();
-      if (adminTime == time) {
-        console.log(64, adminTime, time);
-        console.log("Hello world how are you");
-        // io.emit("start_video", date.toLocaleTimeString());
-        io.emit(
-          "start_video",
-          "ভিডিও চালু হয়েছেঃও " + date.toLocaleTimeString()
-        );
-      }
-      // console.log(time)
-    }, 1000);
-    // io.emit("receive_message", allMessage);
+    socket.emit("receive_message", allMessage);
+
+    console.log(58, msg.time);
+    const myTime = new Date(msg.time);
+    console.log(60, myTime);
+    console.log(myTime - Date.now());
+    setTimeout(() => {
+      io.emit("start_video", allMessage[0].message);
+    }, myTime - Date.now());
   });
 });
 
