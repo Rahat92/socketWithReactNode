@@ -5,7 +5,12 @@ function App() {
   const [message, setMessage] = useState({
     name: "",
     message: "",
+    time: "",
   });
+  const [time, setTime] = useState("");
+  const trackTime = (e) => {
+    setMessage({ ...message, time: e.target.value });
+  };
   const [showMessage, setShowMessage] = useState([]);
   const trackMessage = (e) => {
     setMessage({ ...message, message: e.target.value });
@@ -13,7 +18,8 @@ function App() {
   const trackName = (e) => {
     setMessage({ ...message, name: e.target.value });
   };
-  const sendMessage = () => {
+  const sendMessage = (e) => {
+    e.preventDefault();
     console.log(message);
     socket.emit("send_message", message);
     setMessage({ ...message, message: "" });
@@ -23,31 +29,42 @@ function App() {
       console.log(msg);
       setShowMessage([...msg]);
     });
-  },[socket])
-
-  console.log(showMessage);
+    socket.on("start_video", (msg) => {
+      // alert(msg)
+      setTime(msg);
+    });
+  }, [socket]);
+  console.log(time);
   return (
     <div>
       <ul>
-        {showMessage?.map(el => <li>{el.name} => {el.message}</li>)}
+        {showMessage?.map((el) => (
+          <li>
+            {el.name} => {el.message}
+          </li>
+        ))}
       </ul>
-      <div>
+      {time ? <h1> {time}</h1> : ""}
+      <form onSubmit={sendMessage}>
+        <div>
+          <input
+            onChange={trackName}
+            type="text"
+            placeholder="Your name"
+            value={message.name}
+          />
+        </div>
+
         <input
-          onChange={trackName}
+          onChange={trackMessage}
           type="text"
-          placeholder="Your name"
-          value={message.name}
+          placeholder="message"
+          value={message.message}
         />
-      </div>
-      <input
-        onChange={trackMessage}
-        type="text"
-        placeholder="message"
-        value={message.message}
-      />
-      <button onClick={sendMessage} type="button">
-        Send message
-      </button>
+        {/* <input onChange = {trackDate} type = 'date' value= {''} /> */}
+        <input onChange={trackTime} type="time" value={message.time} />
+        <button type="submit">Send message</button>
+      </form>
     </div>
   );
 }

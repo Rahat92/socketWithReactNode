@@ -53,8 +53,24 @@ io.on("connection", async (socket) => {
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
     const allMessage = await Message.find();
-    console.log(allMessage)
+    console.log(allMessage);
     socket.broadcast.emit("receive_message", allMessage);
+    console.log(msg.time);
+    setInterval(() => {
+      const adminTime = msg.time;
+      const date = new Date();
+      const time = date.getHours() + ":" + date.getMinutes();
+      if (adminTime == time) {
+        console.log(64, adminTime, time);
+        console.log("Hello world how are you");
+        // io.emit("start_video", date.toLocaleTimeString());
+        io.emit(
+          "start_video",
+          "ভিডিও চালু হয়েছেঃও " + date.toLocaleTimeString()
+        );
+      }
+      // console.log(time)
+    }, 1000);
     // io.emit("receive_message", allMessage);
   });
 });
