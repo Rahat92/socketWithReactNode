@@ -25,7 +25,6 @@ function App() {
   };
   const sendMessage = (e) => {
     e.preventDefault();
-    console.log(date);
     const inputYear = date?.split("-")[0];
     const inputMonth = date?.split("-")[1];
     const inputDay = date?.split("-")[2];
@@ -41,16 +40,11 @@ function App() {
   };
   useEffect(() => {
     socket.on("receive_message", (msg) => {
-      console.log(msg);
       setShowMessage([...msg]);
     });
     socket.on("start_video", (msg) => {
-      // alert(msg)
       setTime(msg);
     });
-    if (time) {
-      console.log('Hello world')
-    }
   }, [socket]);
   console.log(time);
   return (

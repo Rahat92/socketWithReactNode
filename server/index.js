@@ -51,23 +51,27 @@ io.on("connection", async (socket) => {
   const messages = await Message.find();
   io.emit("receive_message", messages);
   // io.emit("start_video", messages[0].message);
-    const special = await Message.find({name:'admin'});
+  const special = await Message.find({ name: "admin" });
+  if (special.length > 0) {
     io.emit("start_video", special[0]?.message);
+  }
+
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
     const allMessage = await Message.find();
     console.log(allMessage);
     socket.emit("receive_message", allMessage);
-
-    console.log(58, msg.time);
     const myTime = new Date(msg.time);
-    console.log(60, myTime);
-    console.log(myTime - Date.now());
-    setTimeout(async() => {
-      await Message.create({ name: 'admin', message: 'I am admin' })
-      
-      io.emit("start_video", 'I am admin');
+    setTimeout(async () => {
+      await Message.create({ name: "admin", message: "I am admin" });
+      io.emit("start_video", "I am admin");
     }, myTime - Date.now());
+    console.log(69, myTime-Date.now()+5000)
+    setTimeout(async () => {
+      console.log("Hello world I am here");
+      await Message.deleteOne({ name: "admin" });
+      io.emit("start_video", "");
+    }, myTime - Date.now() + 10000);
   });
 });
 
