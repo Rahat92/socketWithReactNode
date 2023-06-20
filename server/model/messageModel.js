@@ -4,7 +4,7 @@ const messageSchema = new mongoose.Schema({
     message: String,
     name: String,
     timestamp: String,
-    received: Boolean
+    received: Boolean,
 });
 
 module.exports = mongoose.model('message', messageSchema);

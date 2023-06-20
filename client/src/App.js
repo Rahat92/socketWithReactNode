@@ -18,10 +18,12 @@ function App() {
     socket.emit("send_message", message);
     setMessage({ ...message, message: "" });
   };
-  socket.on("receive_message", (msg) => {
-    console.log(msg);
-    setShowMessage([...showMessage, ...msg]);
-  });
+  useEffect(() => {
+    socket.on("receive_message", (msg) => {
+      console.log(msg);
+      setShowMessage([...msg]);
+    });
+  },[socket])
 
   console.log(showMessage);
   return (

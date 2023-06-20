@@ -49,12 +49,13 @@ const io = new Server(server, {
 io.on("connection", async (socket) => {
   console.log(`user connected: ${socket.id}`);
   const messages = await Message.find();
-  console.log(messages);
   io.emit("receive_message", messages);
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
-    // socket.broadcast.emit("receive_message", msg);
-    io.emit("receive_message", [msg]);
+    const allMessage = await Message.find();
+    console.log(allMessage)
+    socket.broadcast.emit("receive_message", allMessage);
+    // io.emit("receive_message", allMessage);
   });
 });
 
