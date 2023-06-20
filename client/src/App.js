@@ -10,7 +10,7 @@ function App() {
   const trackMessage = (e) => {
     setMessage({ ...message, message: e.target.value });
   };
-  const trackName = (e) => { 
+  const trackName = (e) => {
     setMessage({ ...message, name: e.target.value });
   };
   const sendMessage = () => {
@@ -20,21 +20,29 @@ function App() {
   };
   socket.on("receive_message", (msg) => {
     console.log(msg);
-    setShowMessage([...showMessage, msg]);
+    setShowMessage([...showMessage, ...msg]);
   });
 
   console.log(showMessage);
   return (
     <div>
       <ul>
-        {showMessage.map((el) => (
-          <li>{ el.name} => {el.message}</li>
-        ))}
+        {showMessage?.map(el => <li>{el.name} => {el.message}</li>)}
       </ul>
       <div>
-        <input onChange={trackName} type="text" placeholder="Your name" value={message.name} />
+        <input
+          onChange={trackName}
+          type="text"
+          placeholder="Your name"
+          value={message.name}
+        />
       </div>
-      <input onChange={trackMessage} type="text" placeholder="message" value = {message.message} />
+      <input
+        onChange={trackMessage}
+        type="text"
+        placeholder="message"
+        value={message.message}
+      />
       <button onClick={sendMessage} type="button">
         Send message
       </button>
