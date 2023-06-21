@@ -37,9 +37,12 @@ function App() {
     socket.emit("send_message", { ...message, time: myDate });
     setMessage({ ...message, message: "" });
   };
-  const myTime = localStorage.getItem("timer");
   useEffect(() => {
+    let myTime = localStorage.getItem("timer");
     const currentVideo = videoRef.current;
+
+    console.log(myTime);
+    console.log(currentVideo.currentTime);
     currentVideo.currentTime = Number(myTime);
   }, []);
 
@@ -52,6 +55,12 @@ function App() {
     });
     socket.on("count", (msg) => {
       setTimer(msg);
+      if (msg === "00:00:00") {
+        localStorage.removeItem("timer");
+        const currentVideo = videoRef.current;
+        currentVideo.currentTime = 0;
+        return
+      }
       localStorage.setItem("timer", msg.split(":")[2].slice(0, 2));
     });
   }, [socket]);
@@ -60,7 +69,6 @@ function App() {
   //     localStorage.removeItem("timer");
   //   }
   // }, [time]);
-  console.log(timer);
   return (
     <div>
       <ul>
@@ -71,7 +79,7 @@ function App() {
         ))}
       </ul>
       {time ? <h1> {time}</h1> : ""}
-      {timer ? <h1> {timer}</h1> : "no time"}
+      {/* {timer ? <h1> {timer}</h1> : "no time"} */}
       <div>
         <video
           ref={videoRef}

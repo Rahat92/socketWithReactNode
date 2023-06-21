@@ -87,7 +87,7 @@ io.on("connection", async (socket) => {
       io.emit("start_video", "");
       io.emit("count", "00:00:00");
       return clearInterval(timer);
-    }, myTime - Date.now() + 60000);
+    }, myTime - Date.now() + 40000);
   });
 });
 
