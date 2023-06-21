@@ -9,6 +9,7 @@ function App() {
     message: "",
     time: "",
   });
+  const [timer, setTimer] = useState();
   const [date, setDate] = useState();
   const [time, setTime] = useState("");
   const trackTime = (e) => {
@@ -32,18 +33,16 @@ function App() {
     let myDate = new Date(
       `${inputMonth} ${inputDay}, ${inputYear} ${message.time}`
     );
-    // console.log(myDate);
-    // myDate = readableDate(date);
-    // console.log(myDate);
-    // console.log(message);
+
     socket.emit("send_message", { ...message, time: myDate });
     setMessage({ ...message, message: "" });
   };
-  console.log(videoRef);
+  const myTime = localStorage.getItem("timer");
   useEffect(() => {
     const currentVideo = videoRef.current;
-    currentVideo.currentTime = 30;
+    currentVideo.currentTime = Number(myTime);
   }, []);
+
   useEffect(() => {
     socket.on("receive_message", (msg) => {
       setShowMessage([...msg]);
@@ -51,8 +50,17 @@ function App() {
     socket.on("start_video", (msg) => {
       setTime(msg);
     });
+    socket.on("count", (msg) => {
+      setTimer(msg);
+      localStorage.setItem("timer", msg.split(":")[2].slice(0, 2));
+    });
   }, [socket]);
-  console.log(time);
+  // useEffect(() => {
+  //   if (!time) {
+  //     localStorage.removeItem("timer");
+  //   }
+  // }, [time]);
+  console.log(timer);
   return (
     <div>
       <ul>
@@ -63,19 +71,20 @@ function App() {
         ))}
       </ul>
       {time ? <h1> {time}</h1> : ""}
+      {timer ? <h1> {timer}</h1> : "no time"}
       <div>
         <video
           ref={videoRef}
-          width="320"
-          height="240"
+          width="520"
+          height="540"
           controls
           muted
-          style={{ display: `${time ? "block" : ""}` }}
+          style={{ display: `${time ? "block" : "none"}` }}
           autoPlay
         >
           <source src="Assets/videos/parenting.mp4" type="video/mp4" />
         </video>
-        <iframe
+        {/* <iframe
           width="100%"
           className="aspect-video"
           src="Assets/videos/parenting.mp4"
@@ -83,7 +92,7 @@ function App() {
           frameborder="0"
           allow="accelerometer; allowFullScreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
-        ></iframe>
+        ></iframe> */}
       </div>
       <form onSubmit={sendMessage}>
         <div>

@@ -53,25 +53,41 @@ io.on("connection", async (socket) => {
   // io.emit("start_video", messages[0].message);
   const special = await Message.find({ name: "admin" });
   if (special.length > 0) {
+    // setInterval(() => {
+    //   const date = new Date().toLocaleTimeString();
+    //   console.log("mydate", date);
+    // }, 1000);
     io.emit("start_video", special[0]?.message);
   }
 
   socket.on("send_message", async (msg) => {
     await Message.create({ message: msg.message, name: msg.name });
     const allMessage = await Message.find();
-    console.log(allMessage);
     socket.emit("receive_message", allMessage);
     const myTime = new Date(msg.time);
+
+    // video wil start play after a while
+    let timer;
     setTimeout(async () => {
       await Message.create({ name: "admin", message: "I am admin" });
       io.emit("start_video", "I am admin");
+      timer = setInterval(() => {
+        console.log("timer", new Date().toLocaleTimeString());
+        io.emit("count", new Date().toLocaleTimeString());
+      }, 1000);
     }, myTime - Date.now());
-    console.log(69, myTime-Date.now()+5000)
+    // if (timer) {
+    //   console.log('Hello timer')
+    //   clearInterval(timer);
+    // }
+    // video will play for 10 second after it start
     setTimeout(async () => {
       console.log("Hello world I am here");
       await Message.deleteOne({ name: "admin" });
       io.emit("start_video", "");
-    }, myTime - Date.now() + 10000);
+      io.emit("count", "00:00:00");
+      return clearInterval(timer);
+    }, myTime - Date.now() + 60000);
   });
 });
 
