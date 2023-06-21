@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { readableDate } from "./readableDate";
 const socket = io.connect("http://localhost:3001");
 function App() {
+  const videoRef = useRef();
   const [message, setMessage] = useState({
     name: "",
     message: "",
@@ -38,6 +39,11 @@ function App() {
     socket.emit("send_message", { ...message, time: myDate });
     setMessage({ ...message, message: "" });
   };
+  console.log(videoRef);
+  useEffect(() => {
+    const currentVideo = videoRef.current;
+    currentVideo.currentTime = 30;
+  }, []);
   useEffect(() => {
     socket.on("receive_message", (msg) => {
       setShowMessage([...msg]);
@@ -59,18 +65,25 @@ function App() {
       {time ? <h1> {time}</h1> : ""}
       <div>
         <video
+          ref={videoRef}
           width="320"
           height="240"
           controls
           muted
-          style={{ display: `${time ? "block" : "none"}` }}
+          style={{ display: `${time ? "block" : ""}` }}
           autoPlay
         >
           <source src="Assets/videos/parenting.mp4" type="video/mp4" />
         </video>
-        {/* <iframe>
-          <source src="Assets/videos/parenting.mp4" type="video/mp4" />
-        </iframe> */}
+        <iframe
+          width="100%"
+          className="aspect-video"
+          src="Assets/videos/parenting.mp4"
+          title="parenting skill"
+          frameborder="0"
+          allow="accelerometer; allowFullScreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       </div>
       <form onSubmit={sendMessage}>
         <div>
