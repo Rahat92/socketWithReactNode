@@ -57,6 +57,21 @@ function App() {
         ))}
       </ul>
       {time ? <h1> {time}</h1> : ""}
+      <div>
+        <video
+          width="320"
+          height="240"
+          controls
+          muted
+          style={{ display: `${time ? "block" : "none"}` }}
+          autoPlay
+        >
+          <source src="Assets/videos/parenting.mp4" type="video/mp4" />
+        </video>
+        {/* <iframe>
+          <source src="Assets/videos/parenting.mp4" type="video/mp4" />
+        </iframe> */}
+      </div>
       <form onSubmit={sendMessage}>
         <div>
           <input
@@ -73,9 +88,15 @@ function App() {
           placeholder="message"
           value={message.message}
         />
-        <input onChange={trackDate} type="date" />
-        <input onChange={trackTime} type="time" value={message.time} />
-        <button type="submit">Send message</button>
+        <div>
+          <input onChange={trackDate} type="date" />
+        </div>
+        <div>
+          <input onChange={trackTime} type="time" value={message.time} />
+        </div>
+        <div>
+          <button type="submit">Send message</button>
+        </div>
       </form>
     </div>
   );
