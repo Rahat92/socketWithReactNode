@@ -9,6 +9,7 @@ function App() {
     message: "",
     time: "",
   });
+  const [timerArr, setTimerArr] = useState([]);
   const [timer, setTimer] = useState();
   const [date, setDate] = useState();
   const [time, setTime] = useState("");
@@ -41,29 +42,41 @@ function App() {
     let myTime = localStorage.getItem("timer");
     const currentVideo = videoRef.current;
 
-    console.log(myTime);
-    console.log(currentVideo.currentTime);
+    
     currentVideo.currentTime = Number(myTime);
   }, []);
-
+  useEffect(() => {
+    if(timerArr.length === 0) return
+    console.log('Hi world, Hello, ', timerArr[0])
+    videoRef.current.currentTime = Number(timerArr[0].split(":")[2].slice(0, 2));
+  },[timerArr[0]])
   useEffect(() => {
     socket.on("receive_message", (msg) => {
       setShowMessage([...msg]);
     });
     socket.on("start_video", (msg) => {
-      setTime(msg);
+        setTime(msg);
+      socket.on("count", (msg) => { 
+      });
     });
+   
     socket.on("count", (msg) => {
       setTimer(msg);
+      setTimerArr([...timerArr, msg]);
       if (msg === "00:00:00") {
         localStorage.removeItem("timer");
         const currentVideo = videoRef.current;
         currentVideo.currentTime = 0;
-        return
+        return;
       }
       localStorage.setItem("timer", msg.split(":")[2].slice(0, 2));
     });
-  }, [socket]);
+  }, [socket, timer]);
+  useEffect(() => {
+    if (time) {
+      socket.emit('give_time', 'give time')
+    }  
+  }, [time]);
   // useEffect(() => {
   //   if (!time) {
   //     localStorage.removeItem("timer");

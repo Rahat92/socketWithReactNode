@@ -68,14 +68,17 @@ io.on("connection", async (socket) => {
 
     // video wil start play after a while
     let timer;
+    const myArr = []
     setTimeout(async () => {
       await Message.create({ name: "admin", message: "I am admin" });
       io.emit("start_video", "I am admin");
       timer = setInterval(() => {
+        myArr.push(new Date().toLocaleTimeString())
         console.log("timer", new Date().toLocaleTimeString());
         io.emit("count", new Date().toLocaleTimeString());
       }, 1000);
     }, myTime - Date.now());
+    console.log("myArr", myArr)
     // if (timer) {
     //   console.log('Hello timer')
     //   clearInterval(timer);
