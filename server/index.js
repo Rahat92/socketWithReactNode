@@ -68,17 +68,19 @@ io.on("connection", async (socket) => {
 
     // video wil start play after a while
     let timer;
-    const myArr = []
+    const myArr = [];
     setTimeout(async () => {
       await Message.create({ name: "admin", message: "I am admin" });
       io.emit("start_video", "I am admin");
+      let time = 0;
       timer = setInterval(() => {
-        myArr.push(new Date().toLocaleTimeString())
-        console.log("timer", new Date().toLocaleTimeString());
-        io.emit("count", new Date().toLocaleTimeString());
+        myArr.push(new Date().toLocaleTimeString());
+        console.log(time);
+        io.emit("count", time);
+        time++;
       }, 1000);
     }, myTime - Date.now());
-    console.log("myArr", myArr)
+    console.log("myArr", myArr);
     // if (timer) {
     //   console.log('Hello timer')
     //   clearInterval(timer);
@@ -90,7 +92,7 @@ io.on("connection", async (socket) => {
       io.emit("start_video", "");
       io.emit("count", "00:00:00");
       return clearInterval(timer);
-    }, myTime - Date.now() + 40000);
+    }, myTime - Date.now() + 1200000);
   });
 });
 

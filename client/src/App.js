@@ -42,29 +42,33 @@ function App() {
   //   let myTime = localStorage.getItem("timer");
   //   const currentVideo = videoRef.current;
 
-    
   //   currentVideo.currentTime = Number(myTime);
   // }, []);
   useEffect(() => {
-    if(timerArr.length === 0) return
-    console.log('Hi world, Hello, ', timerArr[0]);
+    if (timerArr.length === 0) return;
+    console.log("Hi world, Hello, ", timerArr[0]);
     if (timerArr[0]) {
-      videoRef.current.currentTime = Number(timerArr[0].split(":")[2].slice(0, 2));
+      videoRef.current.currentTime = timerArr[0];
     }
-  },[timerArr[0]])
+  }, [timerArr[0]]);
+
   useEffect(() => {
     socket.on("receive_message", (msg) => {
       setShowMessage([...msg]);
     });
     socket.on("start_video", (msg) => {
-        setTime(msg);
-      socket.on("count", (msg) => { 
-      });
+      setTime(msg);
+      socket.on("count", (msg) => {});
     });
-   
+
     socket.on("count", (msg) => {
       setTimer(msg);
-      setTimerArr([...timerArr, msg]);
+      // if(timerArr.length > 0) return
+      if (timerArr.length < 1) {
+        setTimerArr([...timerArr, msg]);
+      } else {
+        setTimerArr([...timerArr]);
+      }
       // if (msg === "00:00:00") {
       //   localStorage.removeItem("timer");
       //   const currentVideo = videoRef.current;
@@ -76,8 +80,8 @@ function App() {
   }, [socket, timer]);
   useEffect(() => {
     if (time) {
-      socket.emit('give_time', 'give time')
-    }  
+      socket.emit("give_time", "give time");
+    }
   }, [time]);
   // useEffect(() => {
   //   if (!time) {
@@ -86,18 +90,21 @@ function App() {
   // }, [time]);
   return (
     <div>
-      {time && timerArr[0] && (
-        <video
-          ref={videoRef}
-          width="520"
-          height="540"
-          controls
-          muted
-          // style={{ display: `${time ? "block" : "none"}` }}
-          autoPlay
-        >
-          <source src="Assets/videos/parenting.mp4" type="video/mp4" />
-        </video>
+      {timerArr.length>0 && (
+        <>
+          <h1>Hello world</h1>
+          <video
+            ref={videoRef}
+            width="520"
+            height="540"
+            controls
+            muted
+            // style={{ display: `${time ? "block" : "none"}` }}
+            autoPlay
+          >
+            <source src="Assets/videos/parenting.mp4" type="video/mp4" />
+          </video>
+        </>
       )}
       <ul>
         {showMessage?.map((el) => (
@@ -108,17 +115,7 @@ function App() {
       </ul>
       {time ? <h1> {time}</h1> : ""}
       {/* {timer ? <h1> {timer}</h1> : "no time"} */}
-      <div>
-        {/* <iframe
-          width="100%"
-          className="aspect-video"
-          src="Assets/videos/parenting.mp4"
-          title="parenting skill"
-          frameborder="0"
-          allow="accelerometer; allowFullScreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe> */}
-      </div>
+
       <form onSubmit={sendMessage}>
         <div>
           <input
